@@ -21,7 +21,7 @@ jobs:
         run: uv sync --locked
 
       - name: Collect static files
-        run: uv run python manage.py collectstatic
+        run: uv run python manage.py collectstatic --clear
 
       - name: Test with python
         run: uv run pytest
