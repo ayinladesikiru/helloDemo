@@ -29,10 +29,12 @@ jobs:
       - name: Collect static files
         run: uv run python manage.py collectstatic --noinput
 
-      - name: Trigger Deployment
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-            curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/deploy.yml/dispatches \
-            -d '{"ref":"master"}'
+          curl -X POST -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Accept: application/json" \
+          -H "Content-Type: application/json" \
+          -d '{"serviceId": "${{ vars.RENDER_SERVICE_ID }}"}' \
+          https://api.render.com/v1/services/${{ vars.RENDER_SERVICE_ID }}/deploys
